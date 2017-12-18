@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import UploadFileForm
-from .handlers import handle_uploaded_file
+from .models import UploadedFiles
 
 
 def index(request):
@@ -13,8 +13,9 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+            new_file = UploadedFiles(uploaded_file=request.FILES['uploading_file'])
+            new_file.save()
             file_name = request.FILES['uploading_file'].name
-            handle_uploaded_file(request.FILES['uploading_file'])
             return HttpResponse("{file_name}.".format(file_name=file_name))
     else:
         form = UploadFileForm()
